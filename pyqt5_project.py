@@ -89,6 +89,7 @@ def mainWindow():
     et_title = QTextEdit()
     et_description = QPlainTextEdit()
     addButton = QPushButton("Submit")
+    editButton = QPushButton("Edit")
     deleteButton = QPushButton("Delete")
     loginButton = QPushButton("Login")
 
@@ -108,12 +109,14 @@ def mainWindow():
     date_layout.addWidget(et_timeStart)
     date_layout.addWidget(et_timeEnd)
     child_layout.addWidget(addButton)
+    child_layout.addWidget(editButton)
     login_layout.addWidget(et_username)
     login_layout.addWidget(et_password)
     et_username.setPlaceholderText("Username")
     et_password.setPlaceholderText("Password")
 
     addButton.clicked.connect(lambda : addDataToList(et_title.toPlainText(), et_description.toPlainText()))
+    
     child_layout.addWidget(deleteButton)
     main_layout.addWidget(listView)
 
@@ -128,6 +131,24 @@ def mainWindow():
         end_time = et_timeEnd.dateTime().toString("MM/dd/yyyy HH:mm")
         data = submitData(title, description, start_time, end_time)
         listView.addItem("Judul: " + data[0] + ", Deskripsi: " + data[1] + "\n(" + data[2] + " - " + data[3] + ")")
+
+    def deleteData():
+        selected = listView.currentItem()
+        row = listView.row(selected)
+        listView.takeItem(row)
+    
+    def editData(title, description):
+        selected = listView.currentItem()
+        row = listView.row(selected)
+        start_time = et_timeStart.dateTime().toString("MM/dd/yyyy HH:mm")
+        end_time = et_timeEnd.dateTime().toString("MM/dd/yyyy HH:mm")
+        data = submitData(title, description, start_time, end_time)
+        new_item = QListWidgetItem("Judul: " + data[0] + ", Deskripsi: " + data[1] + "\n(" + data[2] + " - " + data[3] + ")")
+        listView.takeItem(row)
+        listView.insertItem(row, new_item)
+
+    editButton.clicked.connect(lambda: editData(et_title.toPlainText(), et_description.toPlainText()))
+    deleteButton.clicked.connect(deleteData)
 
     main_window.show()
 
